@@ -3664,7 +3664,7 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     plcf->vars.key_start = plcf->vars.schema;
 
     ngx_http_randpad_filter_set_vars(&u, &plcf->vars);
-    ngx_log_error(NGX_LOG_INFO,cf, 0, "ngx_http_randpad_filter_pass 3");
+    ngx_conf_log_error(NGX_LOG_INFO, cf, 0,  "ngx_http_randpad_filter_pass 3");
     plcf->location = clcf->name;
 
     if (clcf->named
