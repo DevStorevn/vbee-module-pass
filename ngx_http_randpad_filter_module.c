@@ -117,7 +117,7 @@ ngx_http_randpad(ngx_http_randpad_ctx_t *ctx, ngx_http_request_t *r)
     randpad_b64(buf2, md);
     buf2[index%SHA512_DIGEST_LENGTH] = 0;
 
-	snprintf(buf, sizeof(buf), "<!-- Padding: %s -->", buf2);
+	snprintf(buf, sizeof(buf), "<!-- Padding  cuongnv: %s -->", buf2);
 
 	ctx->randpad.len = strlen(buf);
     ctx->randpad.data = ngx_pcalloc(r->pool, strlen(buf));
