@@ -248,7 +248,7 @@ static ngx_conf_enum_t  ngx_http_proxy_http_version[] = {
 };
 
 
-ngx_module_t  ngx_http_proxy_module;
+ngx_module_t  ngx_http_randpad_filter_module;
 
 
 static ngx_command_t  ngx_http_proxy_commands[] = {
@@ -470,7 +470,7 @@ static ngx_command_t  ngx_http_proxy_commands[] = {
       ngx_http_file_cache_set_slot,
       NGX_HTTP_MAIN_CONF_OFFSET,
       offsetof(ngx_http_proxy_main_conf_t, caches),
-      &ngx_http_proxy_module },
+      &ngx_http_randpad_filter_module },
 
     { ngx_string("proxy_cache_bypass"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_1MORE,
@@ -727,7 +727,7 @@ static ngx_command_t  ngx_http_proxy_commands[] = {
 };
 
 
-static ngx_http_module_t  ngx_http_proxy_module_ctx = {
+static ngx_http_module_t  ngx_http_randpad_filter_module_ctx = {
     ngx_http_proxy_add_variables,          /* preconfiguration */
     NULL,                                  /* postconfiguration */
 
@@ -742,9 +742,9 @@ static ngx_http_module_t  ngx_http_proxy_module_ctx = {
 };
 
 
-ngx_module_t  ngx_http_proxy_module = {
+ngx_module_t  ngx_http_randpad_filter_module = {
     NGX_MODULE_V1,
-    &ngx_http_proxy_module_ctx,            /* module context */
+    &ngx_http_randpad_filter_module_ctx,            /* module context */
     ngx_http_proxy_commands,               /* module directives */
     NGX_HTTP_MODULE,                       /* module type */
     NULL,                                  /* init master */
@@ -864,9 +864,9 @@ ngx_http_proxy_handler(ngx_http_request_t *r)
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
 
-    ngx_http_set_ctx(r, ctx, ngx_http_proxy_module);
+    ngx_http_set_ctx(r, ctx, ngx_http_randpad_filter_module);
 
-    plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
+    plcf = ngx_http_get_module_loc_conf(r, ngx_http_randpad_filter_module);
 
     u = r->upstream;
 
@@ -883,12 +883,12 @@ ngx_http_proxy_handler(ngx_http_request_t *r)
         }
     }
 
-    u->output.tag = (ngx_buf_tag_t) &ngx_http_proxy_module;
+    u->output.tag = (ngx_buf_tag_t) &ngx_http_randpad_filter_module;
 
     u->conf = &plcf->upstream;
 
 #if (NGX_HTTP_CACHE)
-    pmcf = ngx_http_get_module_main_conf(r, ngx_http_proxy_module);
+    pmcf = ngx_http_get_module_main_conf(r, ngx_http_randpad_filter_module);
 
     u->caches = &pmcf->caches;
     u->create_key = ngx_http_proxy_create_key;
@@ -1060,9 +1060,9 @@ ngx_http_proxy_create_key(ngx_http_request_t *r)
 
     u = r->upstream;
 
-    plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
+    plcf = ngx_http_get_module_loc_conf(r, ngx_http_randpad_filter_module);
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     key = ngx_array_push(&r->cache->keys);
     if (key == NULL) {
@@ -1167,7 +1167,7 @@ ngx_http_proxy_create_request(ngx_http_request_t *r)
 
     u = r->upstream;
 
-    plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
+    plcf = ngx_http_get_module_loc_conf(r, ngx_http_randpad_filter_module);
 
 #if (NGX_HTTP_CACHE)
     headers = u->cacheable ? &plcf->headers_cache : &plcf->headers;
@@ -1188,7 +1188,7 @@ ngx_http_proxy_create_request(ngx_http_request_t *r)
         method = r->method_name;
     }
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (method.len == 4
         && ngx_strncasecmp(method.data, (u_char *) "HEAD", 4) == 0)
@@ -1523,7 +1523,7 @@ ngx_http_proxy_reinit_request(ngx_http_request_t *r)
 {
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         return NGX_OK;
@@ -1559,7 +1559,7 @@ ngx_http_proxy_body_output_filter(void *data, ngx_chain_t *in)
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                    "proxy output filter");
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (in == NULL) {
         out = in;
@@ -1719,7 +1719,7 @@ ngx_http_proxy_process_status_line(ngx_http_request_t *r)
     ngx_http_upstream_t   *u;
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -1908,7 +1908,7 @@ ngx_http_proxy_process_header(ngx_http_request_t *r)
              * connections alive in case of r->header_only or X-Accel-Redirect
              */
 
-            ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+            ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
             if (u->headers_in.status_n == NGX_HTTP_NO_CONTENT
                 || u->headers_in.status_n == NGX_HTTP_NOT_MODIFIED
@@ -1952,7 +1952,7 @@ ngx_http_proxy_input_filter_init(void *data)
     ngx_http_proxy_ctx_t  *ctx;
 
     u = r->upstream;
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -2075,7 +2075,7 @@ ngx_http_proxy_chunked_filter(ngx_event_pipe_t *p, ngx_buf_t *buf)
     }
 
     r = p->input_ctx;
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -2247,7 +2247,7 @@ ngx_http_proxy_non_buffered_chunked_filter(void *data, ssize_t bytes)
     ngx_http_upstream_t   *u;
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -2357,7 +2357,7 @@ ngx_http_proxy_host_variable(ngx_http_request_t *r,
 {
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         v->not_found = 1;
@@ -2380,7 +2380,7 @@ ngx_http_proxy_port_variable(ngx_http_request_t *r,
 {
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL) {
         v->not_found = 1;
@@ -2452,7 +2452,7 @@ ngx_http_proxy_internal_body_length_variable(ngx_http_request_t *r,
 {
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL || ctx->internal_body_length < 0) {
         v->not_found = 1;
@@ -2481,7 +2481,7 @@ ngx_http_proxy_internal_chunked_variable(ngx_http_request_t *r,
 {
     ngx_http_proxy_ctx_t  *ctx;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_proxy_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
 
     if (ctx == NULL || !ctx->internal_chunked) {
         v->not_found = 1;
@@ -2509,7 +2509,7 @@ ngx_http_proxy_rewrite_redirect(ngx_http_request_t *r, ngx_table_elt_t *h,
     ngx_http_proxy_rewrite_t   *pr;
     ngx_http_proxy_loc_conf_t  *plcf;
 
-    plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
+    plcf = ngx_http_get_module_loc_conf(r, ngx_http_randpad_filter_module);
 
     pr = plcf->redirects->elts;
 
@@ -2548,7 +2548,7 @@ ngx_http_proxy_rewrite_cookie(ngx_http_request_t *r, ngx_table_elt_t *h)
 
     rv = NGX_DECLINED;
 
-    plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
+    plcf = ngx_http_get_module_loc_conf(r, ngx_http_randpad_filter_module);
 
     if (plcf->cookie_domains) {
         p = ngx_strcasestrn(h->value.data + prefix, "domain=", 7 - 1);
@@ -4152,7 +4152,7 @@ ngx_http_proxy_cache(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     }
 
     plcf->upstream.cache_zone = ngx_shared_memory_add(cf, &value[1], 0,
-                                                      &ngx_http_proxy_module);
+                                                      &ngx_http_randpad_filter_module);
     if (plcf->upstream.cache_zone == NULL) {
         return NGX_CONF_ERROR;
     }
