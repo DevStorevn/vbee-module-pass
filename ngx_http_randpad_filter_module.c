@@ -125,7 +125,8 @@ ngx_http_randpad(ngx_http_randpad_ctx_t *ctx, ngx_http_request_t *r)
 
 	snprintf(buf, sizeof(buf), "<!-- Padding  cuongnv 23232: %s -->", buf2);
 
-    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, buf);
+     ngx_log_error(NGX_LOG_INFO, r->connection->log, 0,
+                          "client sent invalid request cuongnv ------ ");
 
 	ctx->randpad.len = strlen(buf);
     ctx->randpad.data = ngx_pcalloc(r->pool, strlen(buf));
