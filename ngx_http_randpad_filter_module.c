@@ -32,8 +32,8 @@ static void *ngx_http_randpad_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_randpad_merge_loc_conf(ngx_conf_t *cf,
     void *parent, void *child);
 static ngx_int_t ngx_http_randpad_filter_init(ngx_conf_t *cf);
-static char *ngx_http_randpad_pass(ngx_conf_t *cf, ngx_command_t *cmd,
-    void *conf);
+// static char *ngx_http_randpad_pass(ngx_conf_t *cf, ngx_command_t *cmd,
+//     void *conf);
 
 
 static ngx_command_t  ngx_http_randpad_filter_commands[] = {
