@@ -3581,12 +3581,12 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     ngx_http_core_loc_conf_t   *clcf;
     ngx_http_script_compile_t   sc;
 
-    ngx_log_error(NGX_LOG_INFO, r->connection->log, 0, "ngx_http_randpad_filter_pass 0 ");
+    ngx_log_error(NGX_LOG_INFO, cf, 0, "ngx_http_randpad_filter_pass 0 ");
 
     if (plcf->upstream.upstream || plcf->proxy_lengths) {
         return "is duplicate";
     }
-    ngx_log_error(NGX_LOG_INFO, r->connection->log, 0, "ngx_http_randpad_filter_pass 1");
+    ngx_log_error(NGX_LOG_INFO, cf, 0, "ngx_http_randpad_filter_pass 1");
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
 
     clcf->handler = ngx_http_randpad_filter_handler;
@@ -3598,7 +3598,7 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     value = cf->args->elts;
 
     url = &value[1];
-    ngx_log_error(NGX_LOG_INFO, r->connection->log, 0, "ngx_http_randpad_filter_pass 2 ");
+    ngx_log_error(NGX_LOG_INFO, cf, 0, "ngx_http_randpad_filter_pass 2 ");
     n = ngx_http_script_variables_count(url);
 
     if (n) {
@@ -3645,7 +3645,7 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid URL prefix");
         return NGX_CONF_ERROR;
     }
-    ngx_log_error(NGX_LOG_INFO, r->connection->log, 0, "ngx_http_randpad_filter_pass 2 ");
+    ngx_log_error(NGX_LOG_INFO, cf, 0, "ngx_http_randpad_filter_pass 2 ");
     ngx_memzero(&u, sizeof(ngx_url_t));
 
     u.url.len = url->len - add;
@@ -3664,7 +3664,7 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     plcf->vars.key_start = plcf->vars.schema;
 
     ngx_http_randpad_filter_set_vars(&u, &plcf->vars);
-    ngx_log_error(NGX_LOG_INFO, r->connection->log, 0, "ngx_http_randpad_filter_pass 3");
+    ngx_log_error(NGX_LOG_INFO,cf, 0, "ngx_http_randpad_filter_pass 3");
     plcf->location = clcf->name;
 
     if (clcf->named
