@@ -839,10 +839,9 @@ static ngx_http_variable_t  ngx_http_randpad_filter_vars[] = {
 };
 
 
-static ngx_path_init_t  ngx_http_randpad_filter_temp_path = {
-    ngx_string(ngx_http_randpad_filter_TEMP_PATH), { 1, 2, 0 }
+static ngx_path_init_t  ngx_http_proxy_temp_path = {
+    ngx_string(NGX_HTTP_PROXY_TEMP_PATH), { 1, 2, 0 }
 };
-
 
 static ngx_int_t
 ngx_http_randpad_filter_handler(ngx_http_request_t *r)
@@ -3094,7 +3093,7 @@ ngx_http_randpad_filter_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child
 
     if (ngx_conf_merge_path_value(cf, &conf->upstream.temp_path,
                               prev->upstream.temp_path,
-                              &ngx_http_randpad_filter_temp_path)
+                              &ngx_http_proxy_temp_path)
         != NGX_OK)
     {
         return NGX_CONF_ERROR;
