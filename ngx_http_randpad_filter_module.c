@@ -44,12 +44,6 @@ static ngx_command_t  ngx_http_randpad_filter_commands[] = {
       NGX_HTTP_LOC_CONF_OFFSET,
       0,
       NULL },
-      { ngx_string("randpad_pass"),
-      NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF|NGX_CONF_TAKE1,
-      ngx_http_randpad_pass,
-      NGX_HTTP_LOC_CONF_OFFSET,
-      0,
-      NULL },
     { ngx_string("randpad_types"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_1MORE,
       ngx_http_types_slot,
@@ -127,8 +121,11 @@ ngx_http_randpad(ngx_http_randpad_ctx_t *ctx, ngx_http_request_t *r)
 
     randpad_b64(buf2, md);
     buf2[index%SHA512_DIGEST_LENGTH] = 0;
+    
 
 	snprintf(buf, sizeof(buf), "<!-- Padding  cuongnv 23232: %s -->", buf2);
+
+    ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, buf);
 
 	ctx->randpad.len = strlen(buf);
     ctx->randpad.data = ngx_pcalloc(r->pool, strlen(buf));
@@ -242,67 +239,67 @@ ngx_http_randpad_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
     return ngx_http_next_body_filter(r, in);
 }
 
-static char *
-ngx_http_randpad_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
-{
-    ngx_http_randpad_loc_conf_t *rlcf = conf;
+// static char *
+// ngx_http_randpad_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+// {
+//     ngx_http_randpad_loc_conf_t *rlcf = conf;
 
-    ngx_str_t                  *value;
-    ngx_http_core_loc_conf_t   *clcf;
-    ngx_uint_t                  n;
-    ngx_url_t                   url;
+//     ngx_str_t                  *value;
+//     ngx_http_core_loc_conf_t   *clcf;
+//     ngx_uint_t                  n;
+//     ngx_url_t                   url;
 
-    ngx_http_compile_complex_value_t         ccv;
+//     ngx_http_compile_complex_value_t         ccv;
 
-    if (rlcf->upstream.upstream) {
-        return "is duplicate";
-    }
+//     if (rlcf->upstream.upstream) {
+//         return "is duplicate";
+//     }
 
-    clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
+//     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
 
-    clcf->handler = ngx_http_redis2_handler;
+//     clcf->handler = ngx_http_redis2_handler;
 
-    if (clcf->name.data[clcf->name.len - 1] == '/') {
-        clcf->auto_redirect = 1;
-    }
+//     if (clcf->name.data[clcf->name.len - 1] == '/') {
+//         clcf->auto_redirect = 1;
+//     }
     
-    value = cf->args->elts;
+//     value = cf->args->elts;
 
-    n = ngx_http_script_variables_count(&value[1]);
-    if (n) {
-        rlcf->complex_target = ngx_palloc(cf->pool,
-                                          sizeof(ngx_http_complex_value_t));
+//     n = ngx_http_script_variables_count(&value[1]);
+//     if (n) {
+//         rlcf->complex_target = ngx_palloc(cf->pool,
+//                                           sizeof(ngx_http_complex_value_t));
 
-        if (rlcf->complex_target == NULL) {
-            return NGX_CONF_ERROR;
-        }
+//         if (rlcf->complex_target == NULL) {
+//             return NGX_CONF_ERROR;
+//         }
 
-        ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
-        ccv.cf = cf;
-        ccv.value = &value[1];
-        ccv.complex_value = rlcf->complex_target;
+//         ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
+//         ccv.cf = cf;
+//         ccv.value = &value[1];
+//         ccv.complex_value = rlcf->complex_target;
 
-        if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
-            return NGX_CONF_ERROR;
-        }
+//         if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
+//             return NGX_CONF_ERROR;
+//         }
 
-        return NGX_CONF_OK;
-    }
+//         return NGX_CONF_OK;
+//     }
 
-    rlcf->complex_target = NULL;
+//     rlcf->complex_target = NULL;
 	
-    ngx_memzero(&url, sizeof(ngx_url_t));
+//     ngx_memzero(&url, sizeof(ngx_url_t));
 
-    url.url = value[1];
-    url.no_resolve = 1;
+//     url.url = value[1];
+//     url.no_resolve = 1;
 
-    rlcf->upstream.upstream = ngx_http_upstream_add(cf, &url, 0);
-    if (rlcf->upstream.upstream == NULL) {
-        return NGX_CONF_ERROR;
-    }
+//     rlcf->upstream.upstream = ngx_http_upstream_add(cf, &url, 0);
+//     if (rlcf->upstream.upstream == NULL) {
+//         return NGX_CONF_ERROR;
+//     }
 
-    return NGX_CONF_OK;
-}
+//     return NGX_CONF_OK;
+// }
 
 static char *
 ngx_http_randpad_filter(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
