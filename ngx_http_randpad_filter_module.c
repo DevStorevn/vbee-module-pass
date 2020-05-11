@@ -253,7 +253,7 @@ ngx_module_t  ngx_http_randpad_filter_module;
 
 static ngx_command_t  ngx_http_randpad_filter_commands[] = {
 
-    { ngx_string("randpad_proxy_pass"),
+    { ngx_string("cuongnv_proxy_pass"),
       NGX_HTTP_LOC_CONF|NGX_HTTP_LIF_CONF|NGX_HTTP_LMT_CONF|NGX_CONF_TAKE1,
       ngx_http_randpad_filter_pass,
       NGX_HTTP_LOC_CONF_OFFSET,
@@ -846,6 +846,8 @@ static ngx_path_init_t  ngx_http_proxy_temp_path = {
 static ngx_int_t
 ngx_http_randpad_filter_handler(ngx_http_request_t *r)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_handler 0");
+
     ngx_int_t                    rc;
     ngx_http_upstream_t         *u;
     ngx_http_randpad_filter_ctx_t        *ctx;
@@ -881,7 +883,7 @@ ngx_http_randpad_filter_handler(ngx_http_request_t *r)
             return NGX_HTTP_INTERNAL_SERVER_ERROR;
         }
     }
-
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_handler 1");
     u->output.tag = (ngx_buf_tag_t) &ngx_http_randpad_filter_module;
 
     u->conf = &plcf->upstream;
@@ -899,7 +901,7 @@ ngx_http_randpad_filter_handler(ngx_http_request_t *r)
     u->abort_request = ngx_http_randpad_filter_abort_request;
     u->finalize_request = ngx_http_randpad_filter_finalize_request;
     r->state = 0;
-
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_handler 2");
     if (plcf->redirects) {
         u->rewrite_redirect = ngx_http_randpad_filter_rewrite_redirect;
     }
@@ -923,7 +925,7 @@ ngx_http_randpad_filter_handler(ngx_http_request_t *r)
     u->input_filter_ctx = r;
 
     u->accel = 1;
-
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_handler 3");
     if (!plcf->upstream.request_buffering
         && plcf->body_values == NULL && plcf->upstream.pass_request_body
         && (!r->headers_in.chunked
@@ -937,7 +939,7 @@ ngx_http_randpad_filter_handler(ngx_http_request_t *r)
     if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
         return rc;
     }
-
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_handler 4");
     return NGX_DONE;
 }
 
@@ -946,6 +948,7 @@ static ngx_int_t
 ngx_http_randpad_filter_eval(ngx_http_request_t *r, ngx_http_randpad_filter_ctx_t *ctx,
     ngx_http_randpad_filter_loc_conf_t *plcf)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_eval 0");
     u_char               *p;
     size_t                add;
     u_short               port;
@@ -1049,6 +1052,7 @@ ngx_http_randpad_filter_eval(ngx_http_request_t *r, ngx_http_randpad_filter_ctx_
 static ngx_int_t
 ngx_http_randpad_filter_create_key(ngx_http_request_t *r)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_create_key 0");
     size_t                      len, loc_len;
     u_char                     *p;
     uintptr_t                   escape;
@@ -1147,6 +1151,7 @@ ngx_http_randpad_filter_create_key(ngx_http_request_t *r)
 static ngx_int_t
 ngx_http_randpad_filter_create_request(ngx_http_request_t *r)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_create_request 0");
     size_t                        len, uri_len, loc_len, body_len,
                                   key_len, val_len;
     uintptr_t                     escape;
@@ -1520,6 +1525,7 @@ ngx_http_randpad_filter_create_request(ngx_http_request_t *r)
 static ngx_int_t
 ngx_http_randpad_filter_reinit_request(ngx_http_request_t *r)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_reinit_request 0");
     ngx_http_randpad_filter_ctx_t  *ctx;
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
@@ -1547,7 +1553,7 @@ static ngx_int_t
 ngx_http_randpad_filter_body_output_filter(void *data, ngx_chain_t *in)
 {
     ngx_http_request_t  *r = data;
-
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_body_output_filter 0");
     off_t                  size;
     u_char                *chunk;
     ngx_int_t              rc;
@@ -1713,6 +1719,7 @@ out:
 static ngx_int_t
 ngx_http_randpad_filter_process_status_line(ngx_http_request_t *r)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_process_status_line 0");
     size_t                 len;
     ngx_int_t              rc;
     ngx_http_upstream_t   *u;
@@ -1792,6 +1799,7 @@ ngx_http_randpad_filter_process_status_line(ngx_http_request_t *r)
 static ngx_int_t
 ngx_http_randpad_filter_process_header(ngx_http_request_t *r)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_process_header 0");
     ngx_int_t                       rc;
     ngx_table_elt_t                *h;
     ngx_http_upstream_t            *u;
@@ -1947,6 +1955,7 @@ static ngx_int_t
 ngx_http_randpad_filter_input_filter_init(void *data)
 {
     ngx_http_request_t    *r = data;
+    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_input_filter_init 0");
     ngx_http_upstream_t   *u;
     ngx_http_randpad_filter_ctx_t  *ctx;
 
@@ -2354,6 +2363,7 @@ static ngx_int_t
 ngx_http_randpad_filter_host_variable(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_host_variable 0");
     ngx_http_randpad_filter_ctx_t  *ctx;
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
@@ -2377,6 +2387,7 @@ static ngx_int_t
 ngx_http_randpad_filter_port_variable(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_port_variable 0");
     ngx_http_randpad_filter_ctx_t  *ctx;
 
     ctx = ngx_http_get_module_ctx(r, ngx_http_randpad_filter_module);
@@ -2400,6 +2411,7 @@ static ngx_int_t
 ngx_http_randpad_filter_add_x_forwarded_for_variable(ngx_http_request_t *r,
     ngx_http_variable_value_t *v, uintptr_t data)
 {
+  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"============================ ngx_http_randpad_filter_add_x_forwarded_for_variable 0");
     size_t             len;
     u_char            *p;
     ngx_uint_t         i, n;
@@ -3645,11 +3657,14 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "invalid URL prefix");
         return NGX_CONF_ERROR;
     }
-    ngx_conf_log_error(NGX_LOG_INFO, cf, 0, "ngx_http_randpad_filter_pass 2 ");
+
+    ngx_conf_log_error(NGX_LOG_INFO, cf, 0,(const char *) url->data);
+
     ngx_memzero(&u, sizeof(ngx_url_t));
 
     u.url.len = url->len - add;
     u.url.data = url->data + add;
+    // u.url = "https";
     u.default_port = port;
     u.uri_part = 1;
     u.no_resolve = 1;
@@ -3664,8 +3679,14 @@ ngx_http_randpad_filter_pass(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     plcf->vars.key_start = plcf->vars.schema;
 
     ngx_http_randpad_filter_set_vars(&u, &plcf->vars);
-    ngx_conf_log_error(NGX_LOG_INFO, cf, 0,  "ngx_http_randpad_filter_pass 3");
+
     plcf->location = clcf->name;
+
+    
+    // ngx_conf_log_error(NGX_LOG_INFO, cf, 0,  "ngx_http_randpad_filter_pass 3 %V", &plcf->upstream );
+    ngx_conf_log_error(NGX_LOG_INFO, cf, 0,  "ngx_http_randpad_filter_pass 4 %V", &plcf->location );
+    // ngx_conf_log_error(NGX_LOG_INFO, cf, 0,  "ngx_http_randpad_filter_pass 5 %V", &clcf );
+    
 
     if (clcf->named
 #if (NGX_PCRE)
